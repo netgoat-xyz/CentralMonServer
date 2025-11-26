@@ -1,9 +1,20 @@
 import mongoose from "mongoose"
 import logger from "./logger"
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/stats_db"
+const sanitize = (uri: string) => {
+  try {
+    const u = new URL(uri)
+    if (u.password) u.password = encodeURIComponent(u.password)
+    return u.toString()
+  } catch {
+    return uri
+  }
+}
 
-let DB_READY = false
+const raw = process.env.MONGODB_URI || "mongodb://localhost:27017/stats_db"
+const MONGODB_URI = sanitize(raw)
+
+let DB_READY = false as boolean
 
 await mongoose
   .connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 })
@@ -11,7 +22,7 @@ await mongoose
     DB_READY = true
     logger("success", `Mongo connected ${MONGODB_URI}`)
   })
-  .catch((e) => logger("error", "mongo connect:", e.message))
+  .catch((e: Error) => logger("error", "mongo connect:", e.message))
 
 mongoose.connection.on("disconnected", () => logger("warn", "mongoose disconnected"))
 mongoose.connection.on("reconnected", () => logger("info", "mongoose reconnected"))
