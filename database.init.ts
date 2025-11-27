@@ -11,7 +11,7 @@ const sanitize = (uri: string) => {
   }
 }
 
-const raw = process.env.MONGODB_URI || "mongodb://localhost:27017/stats_db"
+const raw = process.env.MONGODB_URI 
 const MONGODB_URI = sanitize(raw)
 
 let DB_READY = false as boolean

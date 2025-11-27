@@ -34,24 +34,6 @@ async function fetchWithTimeout(url: string, opts: any = {}, timeoutMs = PING_TI
     const r = await fetch(url, { ...opts, signal: controller.signal })
     clearTimeout(id)
     return r
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const logger = require('../logger').default;
-dotenv.config();
-
-const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect(process.env.MONGO_URI);
-    
-        logger.success(`MongoDB Connected: ${conn.connection.host}`);
-    } catch (error) {
-        logger.info(`Error: ${error.message}`);
-        process.exit(1);
-    }
-}
-
-
-module.exports = connectDB;
   } catch (e) {
     clearTimeout(id)
     throw e
